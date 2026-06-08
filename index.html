@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>سامانه ملت ویزا | مدیریت حرفه‌ای مشتریان</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f4f9ff 0%, #eef3fc 100%);
+            font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+            padding: 32px 28px;
+            min-height: 100vh;
+        }
+
+        .master-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .header-elegant {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 32px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            padding: 16px 32px;
+            border-radius: 32px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            background: linear-gradient(145deg, #0a2a3b, #0f3e55);
+            width: 52px;
+            height: 52px;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 8px 14px rgba(0,0,0,0.1);
+            color: white;
+        }
+
+        .brand-text h1 {
+            font-size: 1.85rem;
+            font-weight: 800;
+            background: linear-gradient(120deg, #0c3b4f, #1b6c8a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+        .brand-text p {
+            font-size: 0.7rem;
+            color: #8aaec4;
+            font-weight: 500;
+        }
+
+        .btn-modern {
+            background: linear-gradient(105deg, #0f4b64, #0a3a4f);
+            border: none;
+            padding: 14px 34px;
+            border-radius: 44px;
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-modern:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(105deg, #166d8f, #0e5270);
+            box-shadow: 0 14px 24px -6px rgba(0,0,0,0.2);
+        }
+
+        .nav-search {
+            background: white;
+            border-radius: 32px;
+            padding: 12px 28px;
+            margin-bottom: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid #e2ecf5;
+        }
+
+        .search-field {
+            display: flex;
+            align-items: center;
+            background: #f8fafd;
+            border-radius: 48px;
+            padding: 6px 24px;
+            gap: 12px;
+            flex: 1;
+            max-width: 450px;
+            border: 1px solid #e2eaf1;
+        }
+        .search-field i {
+            color: #8aaec4;
+            font-size: 1rem;
+        }
+        .search-field input {
+            border: none;
+            background: transparent;
+            padding: 12px 0;
+            width: 100%;
+            font-size: 0.9rem;
+            font-weight: 500;
+            font-family: inherit;
+            outline: none;
+        }
+        .counter-badge {
+            background: #eef2f9;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #1a5c7a;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0f4b64;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            background: white;
+            padding: 10px;
+            border-radius: 50%;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 28px;
+            background: transparent;
+            margin-bottom: 32px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        .visa-master-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            table-layout: auto;
+        }
+
+        .visa-master-table thead tr {
+            background: #0a2a3f;
+        }
+
+        .visa-master-table th {
+            padding: 20px 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.3px;
+            color: white !important;
+            text-align: center;
+            white-space: nowrap;
+            background: #0a2a3f;
+            border-bottom: 2px solid #1c4e6e;
+            position: relative;
+        }
+
+        .visa-master-table td {
+            padding: 16px 12px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1c4055;
+            border-bottom: 1px solid #eff3f8;
+            background-color: white;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            max-width: 250px;
+        }
+        
+        /* برای ستون‌های با محتوای طولانی */
+        .visa-master-table td.long-content {
+            white-space: nowrap;
+            overflow-x: auto;
+            max-width: 250px;
+        }
+        
+        .visa-master-table td.long-content::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .visa-master-table td.long-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .visa-master-table td.long-content::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        .visa-master-table tbody tr:hover td {
+            background-color: #eef4fc !important;
+            transition: 0.15s;
+        }
+
+        /* استایل برای آدرس‌های طولانی - با اسکرول افقی */
+        .scrollable-cell {
+            max-width: 200px;
+            overflow-x: auto;
+            white-space: nowrap;
+            cursor: pointer;
+            scrollbar-width: thin;
+        }
+        .scrollable-cell::-webkit-scrollbar {
+            height: 4px;
+        }
+        .scrollable-cell::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 4px;
+        }
+        .scrollable-cell::-webkit-scrollbar-thumb {
+            background: #a0a0a0;
+            border-radius: 4px;
+        }
+
+        .code-hidden {
+            font-family: monospace;
+            font-weight: 700;
+            cursor: pointer;
+            background: #f0f4f9;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+            transition: all 0.1s;
+            white-space: nowrap;
+        }
+        .code-hidden:hover {
+            background: #e0e8f0;
+        }
+
+        .action-flex {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: nowrap;
+        }
+        .action-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: #f0f5fa;
+            color: #2a6d8a;
+            font-size: 0.95rem;
+        }
+        .action-icon.transaction {
+            background: #e8f3e8;
+            color: #2d7a4b;
+        }
+        .action-icon.transaction:hover {
+            background: #c8e6d9;
+            transform: translateY(-2px);
+        }
+        .action-icon.edit:hover {
+            background: #fee2c2;
+            color: #c26e1a;
+            transform: translateY(-2px);
+        }
+        .action-icon.delete:hover {
+            background: #ffe0e0;
+            color: #d14545;
+            transform: translateY(-2px);
+        }
+
+        .pagination-panel {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 22px;
+            margin-top: 20px;
+        }
+        .page-button {
+            background: white;
+            border: 1px solid #d4e2ef;
+            padding: 10px 28px;
+            border-radius: 48px;
+            font-weight: 700;
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.15s;
+            color: #1b5a76;
+        }
+        .page-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .page-button:not(:disabled):hover {
+            background: #eaf2f9;
+            border-color: #b9d1e2;
+        }
+        .page-info {
+            background: white;
+            padding: 8px 24px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #1a607d;
+        }
+
+        .modal-overlay-smooth {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+        .modal-card-sleek {
+            background: white;
+            max-width: 800px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border-radius: 48px;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.3);
+            animation: modalPop 0.2s ease-out;
+        }
+        .modal-card-large {
+            max-width: 1000px;
+        }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.96);}
+            to { opacity: 1; transform: scale(1);}
+        }
+        .modal-header-sleek {
+            background: #0a2a3f;
+            padding: 22px 32px;
+            border-radius: 48px 48px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        .modal-header-sleek h3 {
+            font-weight: 800;
+            font-size: 1.3rem;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .close-modal-x {
+            background: rgba(255,255,255,0.15);
+            width: 40px;
+            height: 40px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 26px;
+        }
+        .form-grid-double {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 22px 28px;
+            padding: 34px;
+        }
+        .field-group-simple {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .field-group-simple label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #1b5c7a;
+        }
+        .field-group-simple input, .field-group-simple textarea {
+            border: 1.5px solid #e0ecf5;
+            border-radius: 28px;
+            padding: 12px 18px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: 0.15s;
+        }
+        .field-group-simple input:focus, .field-group-simple textarea:focus {
+            border-color: #1a6e8c;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26,110,140,0.12);
+        }
+        .submit-gold {
+            background: linear-gradient(105deg, #0f4b64, #0a3a4f);
+            border: none;
+            padding: 14px 28px;
+            width: 260px;
+            margin: 10px auto 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            border-radius: 48px;
+            color: white;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .submit-gold:hover {
+            background: linear-gradient(105deg, #186f8f, #0f5470);
+        }
+        .info-note {
+            background: #f0f6fd;
+            padding: 10px 22px;
+            margin: 0 34px 24px 34px;
+            border-radius: 28px;
+            font-size: 0.75rem;
+            color: #2a6b89;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .transactions-list {
+            padding: 20px 30px;
+            border-top: 1px solid #e0ecef;
+        }
+        .transaction-item {
+            background: #f9fbfe;
+            border-radius: 20px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-right: 4px solid #2d7a4b;
+        }
+        .transaction-date {
+            font-weight: 700;
+            color: #1a5c7a;
+        }
+        .transaction-amount {
+            font-weight: 800;
+            color: #2d7a4b;
+            font-size: 1.1rem;
+        }
+        .transaction-desc {
+            color: #6f8fa0;
+            font-size: 0.8rem;
+        }
+        .delete-trans {
+            background: none;
+            border: none;
+            color: #c96f5c;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        .total-paid {
+            background: #eef2f9;
+            padding: 12px 20px;
+            border-radius: 32px;
+            margin: 10px 30px 20px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+        }
+        .afghani-symbol, .remain-af {
+            font-weight: 700;
+        }
+        .afghani-symbol { color: #1d7e5c; }
+        .remain-af { color: #bc6f2c; }
+        
+        .toast-message {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a5c7a;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            z-index: 3000;
+            animation: fadeOut 2s ease forwards;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            70% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); visibility: hidden; }
+        }
+        
+        @media (max-width: 1200px) {
+            .visa-master-table th {
+                font-size: 0.8rem;
+                padding: 15px 8px;
+            }
+            .visa-master-table td {
+                padding: 12px 8px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="master-container">
+    <div class="header-elegant">
+        <div class="brand">
+            <div class="brand-icon"><i class="fas fa-globe-asia"></i></div>
+            <div class="brand-text">
+                <h1>سامانه ملت ویزا</h1>
+                <p>سیستم مدیریت هوشمند مشتریان</p>
+            </div>
+        </div>
+        <button class="btn-modern" id="openCreateModalBtn"><i class="fas fa-user-plus"></i> ثبت مشتری جدید</button>
+    </div>
+
+    <div class="nav-search">
+        <div class="search-field">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchGlobal" placeholder="جستجو در تمام اطلاعات (نام، تخلص، پاسپورت، کد، تلفن، آدرس...)">
+        </div>
+        <div class="counter-badge" id="recordsCounter">۰ مشتری</div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="visa-master-table" id="mainVisaTable">
+            <thead>
+                <tr>
+                    <th style="min-width: 60px;">ردیف</th>
+                    <th style="min-width: 100px;">تاریخ</th>
+                    <th style="min-width: 130px;">نمبر پاسپورت</th>
+                    <th style="min-width: 100px;">تخلص</th>
+                    <th style="min-width: 100px;">اسم</th>
+                    <th style="min-width: 100px;">نام پدر</th>
+                    <th style="min-width: 120px;">نام پدر کلان</th>
+                    <th style="min-width: 100px;">نام مادر</th>
+                    <th style="min-width: 110px;">تماس AF</th>
+                    <th style="min-width: 110px;">تماس ایران</th>
+                    <th style="min-width: 180px;">آدرس افغانستان</th>
+                    <th style="min-width: 180px;">آدرس ایران</th>
+                    <th style="min-width: 120px;">توضیحات</th>
+                    <th style="min-width: 130px;">کد پیگیری</th>
+                    <th style="min-width: 130px;">کد اختصاصی</th>
+                    <th style="min-width: 130px;">کد پیگیری دوم</th>
+                    <th style="min-width: 100px;">کارتابل</th>
+                    <th style="min-width: 110px;">مبلغ کل (AFN)</th>
+                    <th style="min-width: 110px;">رسید کل (AFN)</th>
+                    <th style="min-width: 110px;">باقی (AFN)</th>
+                    <th style="min-width: 100px;">عملیات</th>
+                </tr>
+            </thead>
+            <tbody id="tableDynamicBody">
+                <tr><td colspan="21" style="text-align:center; padding:48px;">در حال اتصال به دیتابیس...<br><div class="spinner" style="width:30px;height:30px;margin:10px auto;"></div></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-panel">
+        <button class="page-button" id="prevPageBtn"><i class="fas fa-chevron-right"></i> قبلی</button>
+        <span class="page-info" id="pageInfoText">صفحه 1 از 1</span>
+        <button class="page-button" id="nextPageBtn">بعدی <i class="fas fa-chevron-left"></i></button>
+    </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set, push, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDXMJHyJy-fl2MyWQjO52ETxzgf8wVL2zs",
+        authDomain: "manage-wifi.firebaseapp.com",
+        databaseURL: "https://manage-wifi-default-rtdb.firebaseio.com",
+        projectId: "manage-wifi",
+        storageBucket: "manage-wifi.firebasestorage.app",
+        messagingSenderId: "194323383151",
+        appId: "1:194323383151:web:9b31f966fdcaa5e7539e9a",
+        measurementId: "G-JFX10T49LZ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const customersRef = ref(database, 'visa_customers');
+
+    let customers = [];
+    let currentPage = 1;
+    const rowsPerPage = 8;
+    let searchKeyword = "";
+
+    function showToast(message) {
+        var existingToast = document.querySelector('.toast-message');
+        if(existingToast) existingToast.remove();
+        var toast = document.createElement('div');
+        toast.className = 'toast-message';
+        toast.innerHTML = '<i class="fas fa-check-circle"></i> ' + message;
+        document.body.appendChild(toast);
+        setTimeout(function() { if(toast) toast.remove(); }, 2000);
+    }
+
+    function showLoading(show) {
+        var existing = document.querySelector('.loading-overlay');
+        if(show && !existing) {
+            var div = document.createElement('div');
+            div.className = 'loading-overlay';
+            div.innerHTML = '<div class="spinner"></div>';
+            document.body.appendChild(div);
+        } else if(!show && existing) {
+            existing.remove();
+        }
+    }
+
+    function copyToClipboard(text, fieldName) {
+        if(!text || text === '-' || text === '') {
+            showToast('متن قابل کپی نیست');
+            return;
+        }
+        navigator.clipboard.writeText(text).then(function() {
+            showToast((fieldName ? fieldName + ': ' : '') + text);
+        }).catch(function() {
+            alert('کپی نشد: ' + text);
+        });
+    }
+
+    function formatAddressForDisplay(text, maxLen) {
+        if(!text) return '-';
+        if(text.length <= maxLen) return text;
+        return text;
+    }
+
+    function hideCode(fullCode) {
+        if(!fullCode || fullCode === '-') return '-';
+        if(fullCode.length <= 6) return fullCode;
+        return fullCode.substring(0, 6) + '•••';
+    }
+
+    function calculateTotals(cust) {
+        var totalReceipt = 0;
+        if(cust.transactions && cust.transactions.length > 0) {
+            for(var i = 0; i < cust.transactions.length; i++) {
+                totalReceipt += parseInt(cust.transactions[i].amount) || 0;
+            }
+        }
+        var totalAmount = parseInt(cust.amount) || 0;
+        var remaining = totalAmount - totalReceipt;
+        if(remaining < 0) remaining = 0;
+        return { totalReceipt: totalReceipt, remaining: remaining };
+    }
+
+    function getFilteredList() {
+        var list = [...customers];
+        if(searchKeyword.trim()) {
+            var kw = searchKeyword.trim().toLowerCase();
+            var filtered = [];
+            for(var i = 0; i < list.length; i++) {
+                var c = list[i];
+                if((c.firstName && c.firstName.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.lastName && c.lastName.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.passportNum && c.passportNum.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.trackingCode1 && c.trackingCode1.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.trackingCode2 && c.trackingCode2.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.specialCode && c.specialCode.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.phoneAF && c.phoneAF.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.phoneIran && c.phoneIran.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.addressAF && c.addressAF.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.addressIran && c.addressIran.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.description && c.description.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.cartable && c.cartable.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.date && c.date.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.fatherName && c.fatherName.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.grandFatherName && c.grandFatherName.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.motherName && c.motherName.toLowerCase().indexOf(kw) !== -1)) {
+                    filtered.push(c);
+                }
+            }
+            list = filtered;
+        }
+        list.sort(function(a, b) { return b.id - a.id; });
+        return list;
+    }
+
+    function formatAfghani(amount) {
+        if(!amount && amount !== 0) return "۰";
+        var num = parseInt(amount.toString().replace(/,/g, '')) || 0;
+        return num.toLocaleString('fa-IR') + " ؋";
+    }
+
+    function renderFullData() {
+        var filtered = getFilteredList();
+        var totalPages = Math.ceil(filtered.length / rowsPerPage) || 1;
+        if(currentPage > totalPages) currentPage = totalPages;
+        if(currentPage < 1) currentPage = 1;
+        var start = (currentPage - 1) * rowsPerPage;
+        var pageItems = filtered.slice(start, start + rowsPerPage);
+        
+        var tbody = document.getElementById("tableDynamicBody");
+        if(!tbody) return;
+        
+        if(pageItems.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="21" style="text-align:center; padding:48px;">✨ هیچ مشتری یافت نشد</td></tr>';
+            document.getElementById("recordsCounter").innerHTML = "۰ مشتری";
+            document.getElementById("pageInfoText").innerHTML = "صفحه ۰ از ۰";
+            return;
+        }
+
+        var html = "";
+        for(var i = 0; i < pageItems.length; i++) {
+            var cust = pageItems[i];
+            var rowNumber = start + i + 1;
+            var totals = calculateTotals(cust);
+            
+            html += '<tr>' +
+                '<td data-copy="ردیف" data-copy-value="' + rowNumber + '">' + rowNumber + '</td>' +
+                '<td data-copy="تاریخ" data-copy-value="' + (cust.date || '') + '">' + (cust.date || '-') + '</td>' +
+                '<td data-copy="نمبر پاسپورت" data-copy-value="' + (cust.passportNum || '') + '">' + (cust.passportNum || '-') + '</td>' +
+                '<td data-copy="تخلص" data-copy-value="' + (cust.lastName || '') + '">' + (cust.lastName || '-') + '</td>' +
+                '<td data-copy="اسم" data-copy-value="' + (cust.firstName || '') + '">' + (cust.firstName || '-') + '</td>' +
+                '<td data-copy="نام پدر" data-copy-value="' + (cust.fatherName || '') + '">' + (cust.fatherName || '-') + '</td>' +
+                '<td data-copy="نام پدر کلان" data-copy-value="' + (cust.grandFatherName || '') + '">' + (cust.grandFatherName || '-') + '</td>' +
+                '<td data-copy="نام مادر" data-copy-value="' + (cust.motherName || '') + '">' + (cust.motherName || '-') + '</td>' +
+                '<td data-copy="تماس AF" data-copy-value="' + (cust.phoneAF || '') + '">' + (cust.phoneAF || '-') + '</td>' +
+                '<td data-copy="تماس ایران" data-copy-value="' + (cust.phoneIran || '') + '">' + (cust.phoneIran || '-') + '</td>' +
+                '<td class="scrollable-cell" data-copy="آدرس افغانستان" data-copy-value="' + (cust.addressAF || '') + '" title="' + (cust.addressAF || '') + '">' + formatAddressForDisplay(cust.addressAF, 30) + '</td>' +
+                '<td class="scrollable-cell" data-copy="آدرس ایران" data-copy-value="' + (cust.addressIran || '') + '" title="' + (cust.addressIran || '') + '">' + formatAddressForDisplay(cust.addressIran, 30) + '</td>' +
+                '<td data-copy="توضیحات" data-copy-value="' + (cust.description || '') + '">' + (cust.description || '-') + '</td>' +
+                '<td data-copy="کد پیگیری" data-copy-value="' + (cust.trackingCode1 || '') + '"><span class="code-hidden" data-fullcode="' + (cust.trackingCode1 || '') + '">' + hideCode(cust.trackingCode1) + '</span></td>' +
+                '<td data-copy="کد اختصاصی" data-copy-value="' + (cust.specialCode || '') + '"><span class="code-hidden" data-fullcode="' + (cust.specialCode || '') + '">' + hideCode(cust.specialCode) + '</span></td>' +
+                '<td data-copy="کد پیگیری دوم" data-copy-value="' + (cust.trackingCode2 || '') + '"><span class="code-hidden" data-fullcode="' + (cust.trackingCode2 || '') + '">' + hideCode(cust.trackingCode2) + '</span></td>' +
+                '<td data-copy="کارتابل" data-copy-value="' + (cust.cartable || '') + '">' + (cust.cartable || '-') + '</td>' +
+                '<td data-copy="مبلغ کل" data-copy-value="' + (cust.amount || '0') + ' افغانی" class="afghani-symbol">' + formatAfghani(cust.amount) + '</td>' +
+                '<td data-copy="رسید کل" data-copy-value="' + totals.totalReceipt + ' افغانی" class="afghani-symbol">' + formatAfghani(totals.totalReceipt) + '</td>' +
+                '<td data-copy="باقی" data-copy-value="' + totals.remaining + ' افغانی" class="remain-af">' + formatAfghani(totals.remaining) + '</td>' +
+                '<td><div class="action-flex">' +
+                '<button class="action-icon transaction" data-id="' + (cust.firebaseId || cust.id) + '" title="تراکنش‌ها / رسید"><i class="fas fa-receipt"></i></button>' +
+                '<button class="action-icon edit" data-id="' + (cust.firebaseId || cust.id) + '" title="ویرایش"><i class="fas fa-edit"></i></button>' +
+                '<button class="action-icon delete" data-id="' + (cust.firebaseId || cust.id) + '" title="حذف"><i class="fas fa-trash-alt"></i></button>' +
+                '</div></td>' +
+                '</tr>';
+        }
+        tbody.innerHTML = html;
+        document.getElementById("recordsCounter").innerHTML = filtered.length + " مشتری";
+        document.getElementById("pageInfoText").innerHTML = "صفحه " + currentPage + " از " + totalPages;
+        document.getElementById("prevPageBtn").disabled = (currentPage === 1);
+        document.getElementById("nextPageBtn").disabled = (currentPage === totalPages);
+        
+        var allCells = tbody.querySelectorAll('td');
+        for(var j = 0; j < allCells.length; j++) {
+            var cell = allCells[j];
+            var isActionCell = cell.querySelector('.action-flex') !== null;
+            if(!isActionCell) {
+                cell.style.cursor = 'copy';
+                cell.ondblclick = (function(c) {
+                    return function(e) {
+                        e.stopPropagation();
+                        var copyLabel = c.getAttribute('data-copy');
+                        var copyValue = c.getAttribute('data-copy-value');
+                        if(copyValue && copyValue !== '') {
+                            copyToClipboard(copyValue, copyLabel);
+                        } else {
+                            var textValue = c.innerText.trim();
+                            if(textValue && textValue !== '-' && textValue !== '') {
+                                copyToClipboard(textValue, copyLabel);
+                            }
+                        }
+                    };
+                })(cell);
+            }
+        }
+        
+        var codeSpans = tbody.querySelectorAll('.code-hidden');
+        for(var k = 0; k < codeSpans.length; k++) {
+            codeSpans[k].ondblclick = function(e) {
+                e.stopPropagation();
+                var fullCode = this.getAttribute('data-fullcode');
+                if(fullCode && fullCode !== '') {
+                    copyToClipboard(fullCode, 'کد');
+                }
+            };
+        }
+        
+        attachButtonEvents(tbody);
+    }
+    
+    function attachButtonEvents(container) {
+        container.querySelectorAll('.action-icon.transaction').forEach(btn => {
+            btn.onclick = (e) => { e.stopPropagation(); openTransactionModal(btn.getAttribute('data-id')); };
+        });
+        container.querySelectorAll('.action-icon.edit').forEach(btn => {
+            btn.onclick = (e) => { e.stopPropagation(); openEditModal(btn.getAttribute('data-id')); };
+        });
+        container.querySelectorAll('.action-icon.delete').forEach(btn => {
+            btn.onclick = (e) => { 
+                e.stopPropagation(); 
+                if(confirm("حذف شود؟")) {
+                    deleteCustomer(btn.getAttribute('data-id'));
+                }
+            };
+        });
+    }
+    
+    async function loadFromFirebase() {
+        showLoading(true);
+        onValue(customersRef, (snapshot) => {
+            const data = snapshot.val();
+            customers = [];
+            if(data) {
+                Object.keys(data).forEach(key => {
+                    const cust = data[key];
+                    cust.firebaseId = key;
+                    customers.push(cust);
+                });
+            }
+            showLoading(false);
+            renderFullData();
+        }, (error) => {
+            showLoading(false);
+            console.error(error);
+            alert("خطا در اتصال به دیتابیس");
+        });
+    }
+    
+    async function saveCustomerToFirebase(customerData, firebaseId = null) {
+        showLoading(true);
+        try {
+            if(firebaseId) {
+                await update(ref(database, `visa_customers/${firebaseId}`), customerData);
+                showToast('مشتری با موفقیت ویرایش شد');
+            } else {
+                const newRef = push(customersRef);
+                await set(newRef, customerData);
+                showToast('مشتری با موفقیت ثبت شد');
+            }
+        } catch(error) {
+            console.error(error);
+            alert("خطا در ذخیره اطلاعات");
+        }
+        showLoading(false);
+    }
+    
+    async function deleteCustomer(firebaseId) {
+        showLoading(true);
+        try {
+            await remove(ref(database, `visa_customers/${firebaseId}`));
+            showToast('مشتری حذف شد');
+        } catch(error) {
+            console.error(error);
+            alert("خطا در حذف");
+        }
+        showLoading(false);
+    }
+    
+    async function updateTransactions(firebaseId, transactions) {
+        showLoading(true);
+        try {
+            await update(ref(database, `visa_customers/${firebaseId}`), { transactions: transactions });
+            showToast('رسید ثبت شد');
+        } catch(error) {
+            console.error(error);
+            alert("خطا در ثبت رسید");
+        }
+        showLoading(false);
+    }
+    
+    function openTransactionModal(firebaseId) {
+        var cust = customers.find(c => c.firebaseId === firebaseId);
+        if(!cust) return;
+        
+        var existing = document.querySelector('.modal-overlay-smooth');
+        if(existing) existing.remove();
+        
+        var totals = calculateTotals(cust);
+        var transactionsHtml = '<div class="transactions-list"><h4 style="margin-bottom:16px;"><i class="fas fa-history"></i> تاریخچه رسیدها</h4>';
+        
+        if(!cust.transactions || cust.transactions.length === 0) {
+            transactionsHtml += '<div style="padding:20px; text-align:center; color:#999;">هیچ رسیدی ثبت نشده است</div>';
+        } else {
+            for(var i = cust.transactions.length - 1; i >= 0; i--) {
+                var t = cust.transactions[i];
+                transactionsHtml += '<div class="transaction-item">' +
+                    '<div><span class="transaction-date">📅 ' + t.date + '</span><div class="transaction-desc">' + (t.description || 'بدون توضیح') + '</div></div>' +
+                    '<div><span class="transaction-amount">' + formatAfghani(t.amount) + '</span></div>' +
+                    '<button class="delete-trans" data-trans-index="' + i + '"><i class="fas fa-trash-can"></i></button>' +
+                    '</div>';
+            }
+        }
+        transactionsHtml += '<div class="total-paid">مجموع رسیدها: <strong>' + formatAfghani(totals.totalReceipt) + '</strong> | باقیمانده: ' + formatAfghani(totals.remaining) + '</div>';
+        transactionsHtml += '<hr style="margin:15px 0;"><h4><i class="fas fa-plus-circle"></i> ثبت رسید جدید</h4>' +
+            '<div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:12px;">' +
+            '<input type="text" id="transDate" placeholder="تاریخ (مثال: 1403/05/20)" style="flex:1; padding:10px; border-radius:24px; border:1px solid #ddd;">' +
+            '<input type="number" id="transAmount" placeholder="مبلغ رسید" style="flex:1; padding:10px; border-radius:24px; border:1px solid #ddd;">' +
+            '<input type="text" id="transDesc" placeholder="توضیح (اختیاری)" style="flex:2; padding:10px; border-radius:24px; border:1px solid #ddd;">' +
+            '<button id="addReceiptBtn" style="background:#0a2a3f; color:white; border:none; padding:0 24px; border-radius:40px; cursor:pointer;">➕ افزودن</button>' +
+            '</div>';
+        
+        var modalDiv = document.createElement('div');
+        modalDiv.className = 'modal-overlay-smooth';
+        modalDiv.innerHTML = '<div class="modal-card-sleek modal-card-large">' +
+            '<div class="modal-header-sleek"><h3><i class="fas fa-receipt"></i> مدیریت رسیدها · ' + cust.firstName + ' ' + cust.lastName + '</h3><div class="close-modal-x" id="closeTransModal">✕</div></div>' +
+            '<div style="padding:0 0 20px 0;">' + transactionsHtml + '</div>' +
+            '<button class="submit-gold" id="closeTransBtn" style="margin-bottom:30px;">بستن</button>' +
+            '</div>';
+        document.body.appendChild(modalDiv);
+        
+        var closeModal = () => modalDiv.remove();
+        document.getElementById("closeTransModal").onclick = closeModal;
+        document.getElementById("closeTransBtn").onclick = closeModal;
+        modalDiv.addEventListener('click', (e) => { if(e.target === modalDiv) closeModal(); });
+        
+        document.getElementById("addReceiptBtn").onclick = async () => {
+            var date = document.getElementById("transDate").value.trim();
+            var amount = document.getElementById("transAmount").value.trim();
+            var desc = document.getElementById("transDesc").value.trim() || "";
+            if(!date) { alert("تاریخ را وارد کنید"); return; }
+            if(!amount || isNaN(parseInt(amount))) { alert("مبلغ معتبر وارد کنید"); return; }
+            var newTransaction = { date: date, amount: parseInt(amount).toString(), description: desc };
+            var newTransactions = cust.transactions ? [...cust.transactions, newTransaction] : [newTransaction];
+            await updateTransactions(firebaseId, newTransactions);
+            closeModal();
+        };
+        
+        modalDiv.querySelectorAll('.delete-trans').forEach(btn => {
+            btn.onclick = async (e) => {
+                e.stopPropagation();
+                var idx = parseInt(btn.getAttribute('data-trans-index'));
+                if(confirm("حذف این رسید؟")) {
+                    var newTransactions = cust.transactions.filter((_, i) => i !== idx);
+                    await updateTransactions(firebaseId, newTransactions);
+                    closeModal();
+                }
+            };
+        });
+    }
+    
+    function openEditModal(firebaseId) {
+        var customer = customers.find(c => c.firebaseId === firebaseId);
+        if(customer) showCustomerModal(customer);
+    }
+    
+    function openNewModal() { showCustomerModal(null); }
+    
+    function showCustomerModal(cust) {
+        var existing = document.querySelector('.modal-overlay-smooth');
+        if(existing) existing.remove();
+        var isEdit = (cust !== null);
+        var modalDiv = document.createElement('div');
+        modalDiv.className = 'modal-overlay-smooth';
+        
+        var allFields = [
+            "تاریخ", "date", "نمبر پاسپورت", "passportNum", "تخلص", "lastName", "اسم", "firstName", "نام پدر", "fatherName",
+            "نام پدر کلان", "grandFatherName", "نام مادر", "motherName", "تماس AF", "phoneAF", "تماس ایران", "phoneIran",
+            "آدرس افغانستان", "addressAF", "آدرس ایران", "addressIran", "توضیحات", "description", "کد پیگیری", "trackingCode1",
+            "کد اختصاصی", "specialCode", "کد پیگیری دوم", "trackingCode2", "کارتابل", "cartable", "مبلغ کل (AFN)", "amount"
+        ];
+        
+        var gridHtml = '<div class="form-grid-double">';
+        for(var i = 0; i < allFields.length; i += 2) {
+            var label = allFields[i];
+            var fieldName = allFields[i+1];
+            var value = cust ? (cust[fieldName] || '') : '';
+            var required = (fieldName === 'passportNum' || fieldName === 'firstName') ? 'required' : '';
+            gridHtml += '<div class="field-group-simple"><label>' + label + '</label><input type="text" name="' + fieldName + '" value="' + (value || '') + '" ' + required + ' placeholder="اختیاری"></div>';
+        }
+        gridHtml += '</div>';
+        
+        modalDiv.innerHTML = '<div class="modal-card-sleek">' +
+            '<div class="modal-header-sleek"><h3><i class="fas fa-' + (isEdit ? 'user-edit' : 'user-plus') + '"></i> ' + (isEdit ? 'ویرایش مشتری' : 'ثبت مشتری جدید') + '</h3><div class="close-modal-x" id="closeCustModal">✕</div></div>' +
+            '<div class="info-note"><i class="fas fa-info-circle"></i> فقط نام و شماره پاسپورت الزامی است. | دابل‌کلیک روی هر سلول برای کپی</div>' +
+            '<form id="custForm">' + gridHtml + '<button type="submit" class="submit-gold">' + (isEdit ? 'ذخیره تغییرات' : 'ثبت مشتری') + '</button></form>' +
+            '</div>';
+        document.body.appendChild(modalDiv);
+        
+        document.getElementById("closeCustModal").onclick = () => modalDiv.remove();
+        modalDiv.addEventListener('click', (e) => { if(e.target === modalDiv) modalDiv.remove(); });
+        
+        var form = modalDiv.querySelector("#custForm");
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            var formData = {};
+            for(var i = 0; i < allFields.length; i += 2) {
+                var name = allFields[i+1];
+                var input = form.querySelector('[name="' + name + '"]');
+                if(input) formData[name] = input.value;
+            }
+            if(!formData.passportNum || !formData.firstName) {
+                alert("لطفاً نمبر پاسپورت و نام را وارد کنید");
+                return;
+            }
+            if(isEdit && cust) {
+                await saveCustomerToFirebase(formData, cust.firebaseId);
+            } else {
+                await saveCustomerToFirebase(formData);
+            }
+            modalDiv.remove();
+        };
+    }
+    
+    document.getElementById("searchGlobal").addEventListener("input", (e) => {
+        searchKeyword = e.target.value;
+        currentPage = 1;
+        renderFullData();
+    });
+    document.getElementById("prevPageBtn").addEventListener("click", () => {
+        if(currentPage > 1) { currentPage--; renderFullData(); }
+    });
+    document.getElementById("nextPageBtn").addEventListener("click", () => {
+        var total = Math.ceil(getFilteredList().length / rowsPerPage);
+        if(currentPage < total) { currentPage++; renderFullData(); }
+    });
+    document.getElementById("openCreateModalBtn").addEventListener("click", () => openNewModal());
+    
+    loadFromFirebase();
+</script>
+</body>
+</html>
