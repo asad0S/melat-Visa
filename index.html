@@ -592,7 +592,7 @@
                     <th style="min-width: 120px;">توضیحات</th>
                     <th style="min-width: 130px;">کد پیگیری</th>
                     <th style="min-width: 130px;">کد اختصاصی</th>
-                    <th style="min-width: 130px;">کد پیگیری دوم</th>
+                    <th style="min-width: 130px;">کد رهگیری </th>
                     <th style="min-width: 100px;">کارتابل</th>
                     <th style="min-width: 110px;">مبلغ کل (AFN)</th>
                     <th style="min-width: 110px;">رسید کل (AFN)</th>
@@ -775,7 +775,7 @@
                 '<td data-copy="توضیحات" data-copy-value="' + (cust.description || '') + '">' + (cust.description || '-') + '</td>' +
                 '<td data-copy="کد پیگیری" data-copy-value="' + (cust.trackingCode1 || '') + '"><span class="code-hidden" data-fullcode="' + (cust.trackingCode1 || '') + '">' + hideCode(cust.trackingCode1) + '</span></td>' +
                 '<td data-copy="کد اختصاصی" data-copy-value="' + (cust.specialCode || '') + '"><span class="code-hidden" data-fullcode="' + (cust.specialCode || '') + '">' + hideCode(cust.specialCode) + '</span></td>' +
-                '<td data-copy="کد پیگیری دوم" data-copy-value="' + (cust.trackingCode2 || '') + '"><span class="code-hidden" data-fullcode="' + (cust.trackingCode2 || '') + '">' + hideCode(cust.trackingCode2) + '</span></td>' +
+                '<td data-copy="کد رهگیری " data-copy-value="' + (cust.trackingCode2 || '') + '"><span class="code-hidden" data-fullcode="' + (cust.trackingCode2 || '') + '">' + hideCode(cust.trackingCode2) + '</span></td>' +
                 '<td data-copy="کارتابل" data-copy-value="' + (cust.cartable || '') + '">' + (cust.cartable || '-') + '</td>' +
                 '<td data-copy="مبلغ کل" data-copy-value="' + (cust.amount || '0') + ' افغانی" class="afghani-symbol">' + formatAfghani(cust.amount) + '</td>' +
                 '<td data-copy="رسید کل" data-copy-value="' + totals.totalReceipt + ' افغانی" class="afghani-symbol">' + formatAfghani(totals.totalReceipt) + '</td>' +
@@ -999,7 +999,7 @@
             "تاریخ", "date", "نمبر پاسپورت", "passportNum", "تخلص", "lastName", "اسم", "firstName", "نام پدر", "fatherName",
             "نام پدر کلان", "grandFatherName", "نام مادر", "motherName", "تماس AF", "phoneAF", "تماس ایران", "phoneIran",
             "آدرس افغانستان", "addressAF", "آدرس ایران", "addressIran", "توضیحات", "description", "کد پیگیری", "trackingCode1",
-            "کد اختصاصی", "specialCode", "کد پیگیری دوم", "trackingCode2", "کارتابل", "cartable", "مبلغ کل (AFN)", "amount"
+            "کد اختصاصی", "specialCode", "کد رهگیری ", "trackingCode2", "کارتابل", "cartable", "مبلغ کل (AFN)", "amount"
         ];
         
         var gridHtml = '<div class="form-grid-double">';
@@ -1014,7 +1014,7 @@
         
         modalDiv.innerHTML = '<div class="modal-card-sleek">' +
             '<div class="modal-header-sleek"><h3><i class="fas fa-' + (isEdit ? 'user-edit' : 'user-plus') + '"></i> ' + (isEdit ? 'ویرایش مشتری' : 'ثبت مشتری جدید') + '</h3><div class="close-modal-x" id="closeCustModal">✕</div></div>' +
-            '<div class="info-note"><i class="fas fa-info-circle"></i> فقط نام و شماره پاسپورت الزامی است. | دابل‌کلیک روی هر سلول برای کپی</div>' +
+           
             '<form id="custForm">' + gridHtml + '<button type="submit" class="submit-gold">' + (isEdit ? 'ذخیره تغییرات' : 'ثبت مشتری') + '</button></form>' +
             '</div>';
         document.body.appendChild(modalDiv);
