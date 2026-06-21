@@ -110,6 +110,14 @@
             border: 1px solid #e2ecf5;
         }
 
+        .search-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            flex-wrap: wrap;
+        }
+
         .search-field {
             display: flex;
             align-items: center;
@@ -118,7 +126,7 @@
             padding: 6px 24px;
             gap: 12px;
             flex: 1;
-            max-width: 450px;
+            min-width: 200px;
             border: 1px solid #e2eaf1;
         }
         .search-field i {
@@ -135,6 +143,26 @@
             font-family: inherit;
             outline: none;
         }
+
+        .filter-select {
+            padding: 10px 20px;
+            border-radius: 48px;
+            border: 1px solid #e2eaf1;
+            background: #f8fafd;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1a5c7a;
+            cursor: pointer;
+            outline: none;
+            min-width: 150px;
+            transition: 0.15s;
+        }
+        .filter-select:focus {
+            border-color: #1a6e8c;
+            box-shadow: 0 0 0 3px rgba(26,110,140,0.12);
+        }
+
         .counter-badge {
             background: #eef2f9;
             padding: 8px 24px;
@@ -142,6 +170,7 @@
             font-weight: 700;
             font-size: 0.85rem;
             color: #1a5c7a;
+            white-space: nowrap;
         }
 
         .loading-overlay {
@@ -219,23 +248,22 @@
             cursor: pointer;
             max-width: 250px;
         }
-        
-        /* برای ستون‌های با محتوای طولانی */
+
         .visa-master-table td.long-content {
             white-space: nowrap;
             overflow-x: auto;
             max-width: 250px;
         }
-        
+
         .visa-master-table td.long-content::-webkit-scrollbar {
             height: 4px;
         }
-        
+
         .visa-master-table td.long-content::-webkit-scrollbar-track {
             background: #f1f1f1;
             border-radius: 10px;
         }
-        
+
         .visa-master-table td.long-content::-webkit-scrollbar-thumb {
             background: #c1c1c1;
             border-radius: 10px;
@@ -246,7 +274,6 @@
             transition: 0.15s;
         }
 
-        /* استایل برای آدرس‌های طولانی - با اسکرول افقی */
         .scrollable-cell {
             max-width: 200px;
             overflow-x: auto;
@@ -369,7 +396,7 @@
         }
         .modal-card-sleek {
             background: white;
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
             max-height: 85vh;
             overflow-y: auto;
@@ -427,18 +454,50 @@
             font-weight: 800;
             color: #1b5c7a;
         }
-        .field-group-simple input, .field-group-simple textarea {
+        .field-group-simple input, .field-group-simple textarea, .field-group-simple select {
             border: 1.5px solid #e0ecf5;
             border-radius: 28px;
             padding: 12px 18px;
             font-family: inherit;
             font-size: 0.9rem;
             transition: 0.15s;
+            background: white;
         }
-        .field-group-simple input:focus, .field-group-simple textarea:focus {
+        .field-group-simple input:focus, .field-group-simple textarea:focus, .field-group-simple select:focus {
             border-color: #1a6e8c;
             outline: none;
             box-shadow: 0 0 0 3px rgba(26,110,140,0.12);
+        }
+        .field-group-simple select {
+            appearance: auto;
+            cursor: pointer;
+        }
+        .field-with-button {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .field-with-button input, .field-with-button select {
+            flex: 1;
+        }
+        .field-with-button .add-btn {
+            background: #0a2a3f;
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 28px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+        .field-with-button .add-btn:hover {
+            background: #1a5c7a;
+            transform: scale(1.05);
         }
         .submit-gold {
             background: linear-gradient(105deg, #0f4b64, #0a3a4f);
@@ -566,9 +625,14 @@
     </div>
 
     <div class="nav-search">
-        <div class="search-field">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchGlobal" placeholder="جستجو در تمام اطلاعات (نام، تخلص، پاسپورت، کد، تلفن، آدرس...)">
+        <div class="search-wrapper">
+            <div class="search-field">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchGlobal" placeholder="جستجو در تمام اطلاعات...">
+            </div>
+            <select class="filter-select" id="cartableFilter">
+                <option value="all">همه</option>
+            </select>
         </div>
         <div class="counter-badge" id="recordsCounter">۰ مشتری</div>
     </div>
@@ -578,7 +642,7 @@
             <thead>
                 <tr>
                     <th style="min-width: 60px;">ردیف</th>
-                    <th style="min-width: 100px;">تاریخ</th>
+                    <th style="min-width: 120px;">تاریخ</th>
                     <th style="min-width: 130px;">نمبر پاسپورت</th>
                     <th style="min-width: 100px;">تخلص</th>
                     <th style="min-width: 100px;">اسم</th>
@@ -589,10 +653,11 @@
                     <th style="min-width: 110px;">تماس ایران</th>
                     <th style="min-width: 180px;">آدرس افغانستان</th>
                     <th style="min-width: 180px;">آدرس ایران</th>
+                    <th style="min-width: 100px;">شغل</th>
                     <th style="min-width: 120px;">توضیحات</th>
                     <th style="min-width: 130px;">کد پیگیری</th>
                     <th style="min-width: 130px;">کد اختصاصی</th>
-                    <th style="min-width: 130px;">کد رهگیری </th>
+                   <th style="min-width: 130px;">کد رهگیری</th>
                     <th style="min-width: 100px;">کارتابل</th>
                     <th style="min-width: 110px;">مبلغ کل (AFN)</th>
                     <th style="min-width: 110px;">رسید کل (AFN)</th>
@@ -601,7 +666,7 @@
                 </tr>
             </thead>
             <tbody id="tableDynamicBody">
-                <tr><td colspan="21" style="text-align:center; padding:48px;">در حال اتصال به دیتابیس...<br><div class="spinner" style="width:30px;height:30px;margin:10px auto;"></div></td></tr>
+                <tr><td colspan="22" style="text-align:center; padding:48px;">در حال اتصال به دیتابیس...<br><div class="spinner" style="width:30px;height:30px;margin:10px auto;"></div></td></tr>
             </tbody>
         </table>
     </div>
@@ -633,10 +698,68 @@
     const database = getDatabase(app);
     const customersRef = ref(database, 'visa_customers');
 
+    const defaultCartables = ['سید محمد', 'سید حسن', 'محمد افشار', 'مهدی', 'سید عبدالله'];
+    let cartableList = [...defaultCartables];
+
     let customers = [];
     let currentPage = 1;
-    const rowsPerPage = 8;
+    const rowsPerPage = 15;
     let searchKeyword = "";
+    let selectedCartable = "all";
+
+    function loadCartables() {
+        const saved = localStorage.getItem('visa_cartables');
+        if(saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if(parsed && parsed.length > 0) {
+                    cartableList = parsed;
+                }
+            } catch(e) {}
+        }
+        updateFilterOptions();
+    }
+    
+    function saveCartables() {
+        localStorage.setItem('visa_cartables', JSON.stringify(cartableList));
+        updateFilterOptions();
+    }
+
+    function updateFilterOptions() {
+        const select = document.getElementById('cartableFilter');
+        if(!select) return;
+        const currentValue = select.value;
+        select.innerHTML = '<option value="all">همه</option>';
+        for(var i = 0; i < cartableList.length; i++) {
+            var option = document.createElement('option');
+            option.value = cartableList[i];
+            option.text = cartableList[i];
+            select.appendChild(option);
+        }
+        if(currentValue && cartableList.indexOf(currentValue) !== -1) {
+            select.value = currentValue;
+        } else {
+            select.value = 'all';
+            selectedCartable = 'all';
+        }
+    }
+
+    function getTodayGregorian() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return year + '-' + month + '-' + day;
+    }
+
+    function formatGregorianDate(dateStr) {
+        if(!dateStr) return '-';
+        const parts = dateStr.split('-');
+        if(parts.length === 3) {
+            return parts[0] + '/' + parts[1] + '/' + parts[2];
+        }
+        return dateStr;
+    }
 
     function showToast(message) {
         var existingToast = document.querySelector('.toast-message');
@@ -699,6 +822,13 @@
 
     function getFilteredList() {
         var list = [...customers];
+        
+        if(selectedCartable !== 'all') {
+            list = list.filter(function(c) {
+                return c.cartable === selectedCartable;
+            });
+        }
+        
         if(searchKeyword.trim()) {
             var kw = searchKeyword.trim().toLowerCase();
             var filtered = [];
@@ -716,6 +846,7 @@
                    (c.addressIran && c.addressIran.toLowerCase().indexOf(kw) !== -1) ||
                    (c.description && c.description.toLowerCase().indexOf(kw) !== -1) ||
                    (c.cartable && c.cartable.toLowerCase().indexOf(kw) !== -1) ||
+                   (c.job && c.job.toLowerCase().indexOf(kw) !== -1) ||
                    (c.date && c.date.toLowerCase().indexOf(kw) !== -1) ||
                    (c.fatherName && c.fatherName.toLowerCase().indexOf(kw) !== -1) ||
                    (c.grandFatherName && c.grandFatherName.toLowerCase().indexOf(kw) !== -1) ||
@@ -725,7 +856,14 @@
             }
             list = filtered;
         }
-        list.sort(function(a, b) { return b.id - a.id; });
+        
+        // مرتب‌سازی: جدیدترین در بالا (createdAt بزرگتر = جدیدتر)
+        list.sort(function(a, b) {
+            var timeA = a.createdAt || 0;
+            var timeB = b.createdAt || 0;
+            return timeB - timeA;
+        });
+        
         return list;
     }
 
@@ -747,7 +885,7 @@
         if(!tbody) return;
         
         if(pageItems.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="21" style="text-align:center; padding:48px;">✨ هیچ مشتری یافت نشد</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="22" style="text-align:center; padding:48px;">✨ هیچ مشتری یافت نشد</td></tr>';
             document.getElementById("recordsCounter").innerHTML = "۰ مشتری";
             document.getElementById("pageInfoText").innerHTML = "صفحه ۰ از ۰";
             return;
@@ -756,12 +894,13 @@
         var html = "";
         for(var i = 0; i < pageItems.length; i++) {
             var cust = pageItems[i];
-            var rowNumber = start + i + 1;
+            // ردیف: جدیدترین = 1، قدیمی‌ترین = تعداد کل
+            var rowNumber = filtered.length - (start + i);
             var totals = calculateTotals(cust);
             
             html += '<tr>' +
                 '<td data-copy="ردیف" data-copy-value="' + rowNumber + '">' + rowNumber + '</td>' +
-                '<td data-copy="تاریخ" data-copy-value="' + (cust.date || '') + '">' + (cust.date || '-') + '</td>' +
+                '<td data-copy="تاریخ" data-copy-value="' + (cust.date || '') + '">' + formatGregorianDate(cust.date) + '</td>' +
                 '<td data-copy="نمبر پاسپورت" data-copy-value="' + (cust.passportNum || '') + '">' + (cust.passportNum || '-') + '</td>' +
                 '<td data-copy="تخلص" data-copy-value="' + (cust.lastName || '') + '">' + (cust.lastName || '-') + '</td>' +
                 '<td data-copy="اسم" data-copy-value="' + (cust.firstName || '') + '">' + (cust.firstName || '-') + '</td>' +
@@ -772,10 +911,11 @@
                 '<td data-copy="تماس ایران" data-copy-value="' + (cust.phoneIran || '') + '">' + (cust.phoneIran || '-') + '</td>' +
                 '<td class="scrollable-cell" data-copy="آدرس افغانستان" data-copy-value="' + (cust.addressAF || '') + '" title="' + (cust.addressAF || '') + '">' + formatAddressForDisplay(cust.addressAF, 30) + '</td>' +
                 '<td class="scrollable-cell" data-copy="آدرس ایران" data-copy-value="' + (cust.addressIran || '') + '" title="' + (cust.addressIran || '') + '">' + formatAddressForDisplay(cust.addressIran, 30) + '</td>' +
+                '<td data-copy="شغل" data-copy-value="' + (cust.job || '') + '">' + (cust.job || '-') + '</td>' +
                 '<td data-copy="توضیحات" data-copy-value="' + (cust.description || '') + '">' + (cust.description || '-') + '</td>' +
                 '<td data-copy="کد پیگیری" data-copy-value="' + (cust.trackingCode1 || '') + '"><span class="code-hidden" data-fullcode="' + (cust.trackingCode1 || '') + '">' + hideCode(cust.trackingCode1) + '</span></td>' +
                 '<td data-copy="کد اختصاصی" data-copy-value="' + (cust.specialCode || '') + '"><span class="code-hidden" data-fullcode="' + (cust.specialCode || '') + '">' + hideCode(cust.specialCode) + '</span></td>' +
-                '<td data-copy="کد رهگیری " data-copy-value="' + (cust.trackingCode2 || '') + '"><span class="code-hidden" data-fullcode="' + (cust.trackingCode2 || '') + '">' + hideCode(cust.trackingCode2) + '</span></td>' +
+                '<td data-copy="کد پیگیری دوم" data-copy-value="' + (cust.trackingCode2 || '') + '"><span class="code-hidden" data-fullcode="' + (cust.trackingCode2 || '') + '">' + hideCode(cust.trackingCode2) + '</span></td>' +
                 '<td data-copy="کارتابل" data-copy-value="' + (cust.cartable || '') + '">' + (cust.cartable || '-') + '</td>' +
                 '<td data-copy="مبلغ کل" data-copy-value="' + (cust.amount || '0') + ' افغانی" class="afghani-symbol">' + formatAfghani(cust.amount) + '</td>' +
                 '<td data-copy="رسید کل" data-copy-value="' + totals.totalReceipt + ' افغانی" class="afghani-symbol">' + formatAfghani(totals.totalReceipt) + '</td>' +
@@ -850,15 +990,31 @@
     
     async function loadFromFirebase() {
         showLoading(true);
+        loadCartables();
         onValue(customersRef, (snapshot) => {
             const data = snapshot.val();
             customers = [];
             if(data) {
-                Object.keys(data).forEach(key => {
+                const keys = Object.keys(data);
+                const tempCustomers = [];
+                for(var i = 0; i < keys.length; i++) {
+                    const key = keys[i];
                     const cust = data[key];
                     cust.firebaseId = key;
+                    tempCustomers.push(cust);
+                }
+                
+                // برای مشتریان قدیمی که createdAt ندارند، یک مقدار اختصاص می‌دهیم
+                const now = Date.now();
+                const baseTime = now - (tempCustomers.length * 1000 * 60 * 60 * 24 * 30); // هر مشتری 30 روز فاصله
+                
+                for(var j = 0; j < tempCustomers.length; j++) {
+                    const cust = tempCustomers[j];
+                    if(!cust.createdAt) {
+                        cust.createdAt = baseTime + (j * 1000 * 60 * 60 * 24 * 30);
+                    }
                     customers.push(cust);
-                });
+                }
             }
             showLoading(false);
             renderFullData();
@@ -872,6 +1028,9 @@
     async function saveCustomerToFirebase(customerData, firebaseId = null) {
         showLoading(true);
         try {
+            if(!firebaseId) {
+                customerData.createdAt = Date.now();
+            }
             if(firebaseId) {
                 await update(ref(database, `visa_customers/${firebaseId}`), customerData);
                 showToast('مشتری با موفقیت ویرایش شد');
@@ -919,6 +1078,7 @@
         if(existing) existing.remove();
         
         var totals = calculateTotals(cust);
+        var today = getTodayGregorian();
         var transactionsHtml = '<div class="transactions-list"><h4 style="margin-bottom:16px;"><i class="fas fa-history"></i> تاریخچه رسیدها</h4>';
         
         if(!cust.transactions || cust.transactions.length === 0) {
@@ -927,7 +1087,7 @@
             for(var i = cust.transactions.length - 1; i >= 0; i--) {
                 var t = cust.transactions[i];
                 transactionsHtml += '<div class="transaction-item">' +
-                    '<div><span class="transaction-date">📅 ' + t.date + '</span><div class="transaction-desc">' + (t.description || 'بدون توضیح') + '</div></div>' +
+                    '<div><span class="transaction-date">📅 ' + formatGregorianDate(t.date) + '</span><div class="transaction-desc">' + (t.description || 'بدون توضیح') + '</div></div>' +
                     '<div><span class="transaction-amount">' + formatAfghani(t.amount) + '</span></div>' +
                     '<button class="delete-trans" data-trans-index="' + i + '"><i class="fas fa-trash-can"></i></button>' +
                     '</div>';
@@ -936,7 +1096,7 @@
         transactionsHtml += '<div class="total-paid">مجموع رسیدها: <strong>' + formatAfghani(totals.totalReceipt) + '</strong> | باقیمانده: ' + formatAfghani(totals.remaining) + '</div>';
         transactionsHtml += '<hr style="margin:15px 0;"><h4><i class="fas fa-plus-circle"></i> ثبت رسید جدید</h4>' +
             '<div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:12px;">' +
-            '<input type="text" id="transDate" placeholder="تاریخ (مثال: 1403/05/20)" style="flex:1; padding:10px; border-radius:24px; border:1px solid #ddd;">' +
+            '<input type="text" id="transDate" placeholder="تاریخ (مثال: 2024-01-15)" value="' + today + '" style="flex:1; padding:10px; border-radius:24px; border:1px solid #ddd;">' +
             '<input type="number" id="transAmount" placeholder="مبلغ رسید" style="flex:1; padding:10px; border-radius:24px; border:1px solid #ddd;">' +
             '<input type="text" id="transDesc" placeholder="توضیح (اختیاری)" style="flex:2; padding:10px; border-radius:24px; border:1px solid #ddd;">' +
             '<button id="addReceiptBtn" style="background:#0a2a3f; color:white; border:none; padding:0 24px; border-radius:40px; cursor:pointer;">➕ افزودن</button>' +
@@ -995,11 +1155,14 @@
         var modalDiv = document.createElement('div');
         modalDiv.className = 'modal-overlay-smooth';
         
+        var today = getTodayGregorian();
+        
         var allFields = [
             "تاریخ", "date", "نمبر پاسپورت", "passportNum", "تخلص", "lastName", "اسم", "firstName", "نام پدر", "fatherName",
             "نام پدر کلان", "grandFatherName", "نام مادر", "motherName", "تماس AF", "phoneAF", "تماس ایران", "phoneIran",
-            "آدرس افغانستان", "addressAF", "آدرس ایران", "addressIran", "توضیحات", "description", "کد پیگیری", "trackingCode1",
-            "کد اختصاصی", "specialCode", "کد رهگیری ", "trackingCode2", "کارتابل", "cartable", "مبلغ کل (AFN)", "amount"
+            "آدرس افغانستان", "addressAF", "آدرس ایران", "addressIran", "شغل", "job", "توضیحات", "description", 
+            "کد پیگیری", "trackingCode1", "کد اختصاصی", "specialCode", "کد پیگیری دوم", "trackingCode2",
+            "کارتابل", "cartable", "مبلغ کل (AFN)", "amount"
         ];
         
         var gridHtml = '<div class="form-grid-double">';
@@ -1007,20 +1170,61 @@
             var label = allFields[i];
             var fieldName = allFields[i+1];
             var value = cust ? (cust[fieldName] || '') : '';
-            var required = (fieldName === 'passportNum' || fieldName === 'firstName') ? 'required' : '';
-            gridHtml += '<div class="field-group-simple"><label>' + label + '</label><input type="text" name="' + fieldName + '" value="' + (value || '') + '" ' + required + ' placeholder="اختیاری"></div>';
+            
+            if(fieldName === 'date') {
+                value = value || today;
+                gridHtml += '<div class="field-group-simple"><label>' + label + ' (میلادی)</label><input type="text" name="' + fieldName + '" value="' + value + '" placeholder="مثال: 2024-01-15"></div>';
+            } else if(fieldName === 'cartable') {
+                var optionsHtml = '';
+                for(var c = 0; c < cartableList.length; c++) {
+                    var selected = (value === cartableList[c]) ? 'selected' : '';
+                    optionsHtml += '<option value="' + cartableList[c] + '" ' + selected + '>' + cartableList[c] + '</option>';
+                }
+                gridHtml += '<div class="field-group-simple"><label>' + label + '</label>' +
+                    '<div class="field-with-button">' +
+                    '<select name="' + fieldName + '" id="cartableSelect">' + optionsHtml + '</select>' +
+                    '<button type="button" class="add-btn" id="addCartableBtn" title="افزودن کارتابل جدید"><i class="fas fa-plus"></i></button>' +
+                    '</div></div>';
+            } else if(fieldName === 'passportNum') {
+                gridHtml += '<div class="field-group-simple"><label>' + label + ' (اختیاری)</label><input type="text" name="' + fieldName + '" value="' + (value || '') + '" placeholder="اختیاری"></div>';
+            } else if(fieldName === 'description') {
+                gridHtml += '<div class="field-group-simple"><label>' + label + '</label><textarea name="' + fieldName + '" rows="2" placeholder="اختیاری">' + (value || '') + '</textarea></div>';
+            } else {
+                var required = (fieldName === 'firstName') ? 'required' : '';
+                gridHtml += '<div class="field-group-simple"><label>' + label + '</label><input type="text" name="' + fieldName + '" value="' + (value || '') + '" ' + required + ' placeholder="اختیاری"></div>';
+            }
         }
         gridHtml += '</div>';
         
         modalDiv.innerHTML = '<div class="modal-card-sleek">' +
             '<div class="modal-header-sleek"><h3><i class="fas fa-' + (isEdit ? 'user-edit' : 'user-plus') + '"></i> ' + (isEdit ? 'ویرایش مشتری' : 'ثبت مشتری جدید') + '</h3><div class="close-modal-x" id="closeCustModal">✕</div></div>' +
-           
+            '<div class="info-note"><i class="fas fa-info-circle"></i> فقط نام الزامی است. پاسپورت اختیاری می‌باشد. تاریخ به فرمت میلادی (YYYY-MM-DD)</div>' +
             '<form id="custForm">' + gridHtml + '<button type="submit" class="submit-gold">' + (isEdit ? 'ذخیره تغییرات' : 'ثبت مشتری') + '</button></form>' +
             '</div>';
         document.body.appendChild(modalDiv);
         
         document.getElementById("closeCustModal").onclick = () => modalDiv.remove();
         modalDiv.addEventListener('click', (e) => { if(e.target === modalDiv) modalDiv.remove(); });
+        
+        document.getElementById("addCartableBtn").onclick = function() {
+            var newCartable = prompt("نام کارتابل جدید را وارد کنید:");
+            if(newCartable && newCartable.trim() !== '') {
+                newCartable = newCartable.trim();
+                if(cartableList.indexOf(newCartable) === -1) {
+                    cartableList.push(newCartable);
+                    saveCartables();
+                    var select = document.getElementById("cartableSelect");
+                    var option = document.createElement('option');
+                    option.value = newCartable;
+                    option.text = newCartable;
+                    option.selected = true;
+                    select.appendChild(option);
+                    showToast('کارتابل "' + newCartable + '" اضافه شد');
+                } else {
+                    alert('این کارتابل قبلاً وجود دارد');
+                }
+            }
+        };
         
         var form = modalDiv.querySelector("#custForm");
         form.onsubmit = async (e) => {
@@ -1031,10 +1235,12 @@
                 var input = form.querySelector('[name="' + name + '"]');
                 if(input) formData[name] = input.value;
             }
-            if(!formData.passportNum || !formData.firstName) {
-                alert("لطفاً نمبر پاسپورت و نام را وارد کنید");
+            if(!formData.firstName) {
+                alert("لطفاً نام مشتری را وارد کنید");
                 return;
             }
+            if(!formData.passportNum) formData.passportNum = '';
+            
             if(isEdit && cust) {
                 await saveCustomerToFirebase(formData, cust.firebaseId);
             } else {
@@ -1049,6 +1255,13 @@
         currentPage = 1;
         renderFullData();
     });
+    
+    document.getElementById("cartableFilter").addEventListener("change", (e) => {
+        selectedCartable = e.target.value;
+        currentPage = 1;
+        renderFullData();
+    });
+    
     document.getElementById("prevPageBtn").addEventListener("click", () => {
         if(currentPage > 1) { currentPage--; renderFullData(); }
     });
