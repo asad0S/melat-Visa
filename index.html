@@ -249,26 +249,6 @@
             max-width: 250px;
         }
 
-        .visa-master-table td.long-content {
-            white-space: nowrap;
-            overflow-x: auto;
-            max-width: 250px;
-        }
-
-        .visa-master-table td.long-content::-webkit-scrollbar {
-            height: 4px;
-        }
-
-        .visa-master-table td.long-content::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        .visa-master-table td.long-content::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 10px;
-        }
-
         .visa-master-table tbody tr:hover td {
             background-color: #eef4fc !important;
             transition: 0.15s;
@@ -643,7 +623,6 @@
                 <tr>
                     <th style="min-width: 60px;">ردیف</th>
                     <th style="min-width: 120px;">تاریخ</th>
-                    <th style="min-width: 130px;">نمبر پاسپورت</th>
                     <th style="min-width: 100px;">تخلص</th>
                     <th style="min-width: 100px;">اسم</th>
                     <th style="min-width: 100px;">نام پدر</th>
@@ -657,7 +636,7 @@
                     <th style="min-width: 120px;">توضیحات</th>
                     <th style="min-width: 130px;">کد پیگیری</th>
                     <th style="min-width: 130px;">کد اختصاصی</th>
-                   <th style="min-width: 130px;">کد رهگیری</th>
+                    <th style="min-width: 130px;">کد رهگیری</th>
                     <th style="min-width: 100px;">کارتابل</th>
                     <th style="min-width: 110px;">مبلغ کل (AFN)</th>
                     <th style="min-width: 110px;">رسید کل (AFN)</th>
@@ -666,7 +645,7 @@
                 </tr>
             </thead>
             <tbody id="tableDynamicBody">
-                <tr><td colspan="22" style="text-align:center; padding:48px;">در حال اتصال به دیتابیس...<br><div class="spinner" style="width:30px;height:30px;margin:10px auto;"></div></td></tr>
+                <tr><td colspan="21" style="text-align:center; padding:48px;">در حال اتصال به دیتابیس...<br><div class="spinner" style="width:30px;height:30px;margin:10px auto;"></div></td></tr>
             </tbody>
         </table>
     </div>
@@ -697,9 +676,10 @@
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
     const customersRef = ref(database, 'visa_customers');
+    const cartablesRef = ref(database, 'visa_cartables');
 
     const defaultCartables = ['سید محمد', 'سید حسن', 'محمد افشار', 'مهدی', 'سید عبدالله'];
-    let cartableList = [...defaultCartables];
+    let cartableList = [];
 
     let customers = [];
     let currentPage = 1;
@@ -707,22 +687,58 @@
     let searchKeyword = "";
     let selectedCartable = "all";
 
-    function loadCartables() {
-        const saved = localStorage.getItem('visa_cartables');
-        if(saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                if(parsed && parsed.length > 0) {
-                    cartableList = parsed;
+    // بارگذاری کارتابل‌ها از Firebase
+    function loadCartablesFromFirebase() {
+        onValue(cartablesRef, (snapshot) => {
+            const data = snapshot.val();
+            if(data) {
+                // اگر کارتابل‌ها به صورت آرایه ذخیره شده باشند
+                if(Array.isArray(data)) {
+                    cartableList = data;
+                } else {
+                    // اگر به صورت آبجکت ذخیره شده باشند
+                    const keys = Object.keys(data);
+                    cartableList = [];
+                    for(var i = 0; i < keys.length; i++) {
+                        cartableList.push(data[keys[i]]);
+                    }
                 }
-            } catch(e) {}
-        }
-        updateFilterOptions();
+            } else {
+                // اگر هیچ کارتابلی در دیتابیس نبود، کارتابل‌های پیش‌فرض را اضافه می‌کنیم
+                cartableList = [...defaultCartables];
+                saveCartablesToFirebase();
+            }
+            updateFilterOptions();
+        }, (error) => {
+            console.error("خطا در بارگذاری کارتابل‌ها:", error);
+            // در صورت خطا، از کارتابل‌های پیش‌فرض استفاده می‌کنیم
+            cartableList = [...defaultCartables];
+            updateFilterOptions();
+        });
     }
-    
-    function saveCartables() {
-        localStorage.setItem('visa_cartables', JSON.stringify(cartableList));
+
+    // ذخیره کارتابل‌ها در Firebase
+    async function saveCartablesToFirebase() {
+        try {
+            await set(cartablesRef, cartableList);
+            showToast('کارتابل‌ها ذخیره شدند');
+        } catch(error) {
+            console.error("خطا در ذخیره کارتابل‌ها:", error);
+            alert("خطا در ذخیره کارتابل‌ها");
+        }
+    }
+
+    // افزودن کارتابل جدید به Firebase
+    async function addCartableToFirebase(newCartable) {
+        if(cartableList.indexOf(newCartable) !== -1) {
+            alert('این کارتابل قبلاً وجود دارد');
+            return false;
+        }
+        cartableList.push(newCartable);
+        await saveCartablesToFirebase();
         updateFilterOptions();
+        showToast('کارتابل "' + newCartable + '" اضافه شد');
+        return true;
     }
 
     function updateFilterOptions() {
@@ -836,7 +852,6 @@
                 var c = list[i];
                 if((c.firstName && c.firstName.toLowerCase().indexOf(kw) !== -1) ||
                    (c.lastName && c.lastName.toLowerCase().indexOf(kw) !== -1) ||
-                   (c.passportNum && c.passportNum.toLowerCase().indexOf(kw) !== -1) ||
                    (c.trackingCode1 && c.trackingCode1.toLowerCase().indexOf(kw) !== -1) ||
                    (c.trackingCode2 && c.trackingCode2.toLowerCase().indexOf(kw) !== -1) ||
                    (c.specialCode && c.specialCode.toLowerCase().indexOf(kw) !== -1) ||
@@ -857,7 +872,6 @@
             list = filtered;
         }
         
-        // مرتب‌سازی: جدیدترین در بالا (createdAt بزرگتر = جدیدتر)
         list.sort(function(a, b) {
             var timeA = a.createdAt || 0;
             var timeB = b.createdAt || 0;
@@ -885,7 +899,7 @@
         if(!tbody) return;
         
         if(pageItems.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="22" style="text-align:center; padding:48px;">✨ هیچ مشتری یافت نشد</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="21" style="text-align:center; padding:48px;">✨ هیچ مشتری یافت نشد</td></tr>';
             document.getElementById("recordsCounter").innerHTML = "۰ مشتری";
             document.getElementById("pageInfoText").innerHTML = "صفحه ۰ از ۰";
             return;
@@ -894,14 +908,12 @@
         var html = "";
         for(var i = 0; i < pageItems.length; i++) {
             var cust = pageItems[i];
-            // ردیف: جدیدترین = 1، قدیمی‌ترین = تعداد کل
             var rowNumber = filtered.length - (start + i);
             var totals = calculateTotals(cust);
             
             html += '<tr>' +
                 '<td data-copy="ردیف" data-copy-value="' + rowNumber + '">' + rowNumber + '</td>' +
                 '<td data-copy="تاریخ" data-copy-value="' + (cust.date || '') + '">' + formatGregorianDate(cust.date) + '</td>' +
-                '<td data-copy="نمبر پاسپورت" data-copy-value="' + (cust.passportNum || '') + '">' + (cust.passportNum || '-') + '</td>' +
                 '<td data-copy="تخلص" data-copy-value="' + (cust.lastName || '') + '">' + (cust.lastName || '-') + '</td>' +
                 '<td data-copy="اسم" data-copy-value="' + (cust.firstName || '') + '">' + (cust.firstName || '-') + '</td>' +
                 '<td data-copy="نام پدر" data-copy-value="' + (cust.fatherName || '') + '">' + (cust.fatherName || '-') + '</td>' +
@@ -915,7 +927,7 @@
                 '<td data-copy="توضیحات" data-copy-value="' + (cust.description || '') + '">' + (cust.description || '-') + '</td>' +
                 '<td data-copy="کد پیگیری" data-copy-value="' + (cust.trackingCode1 || '') + '"><span class="code-hidden" data-fullcode="' + (cust.trackingCode1 || '') + '">' + hideCode(cust.trackingCode1) + '</span></td>' +
                 '<td data-copy="کد اختصاصی" data-copy-value="' + (cust.specialCode || '') + '"><span class="code-hidden" data-fullcode="' + (cust.specialCode || '') + '">' + hideCode(cust.specialCode) + '</span></td>' +
-                '<td data-copy="کد پیگیری دوم" data-copy-value="' + (cust.trackingCode2 || '') + '"><span class="code-hidden" data-fullcode="' + (cust.trackingCode2 || '') + '">' + hideCode(cust.trackingCode2) + '</span></td>' +
+                '<td data-copy="کد رهگیری" data-copy-value="' + (cust.trackingCode2 || '') + '"><span class="code-hidden" data-fullcode="' + (cust.trackingCode2 || '') + '">' + hideCode(cust.trackingCode2) + '</span></td>' +
                 '<td data-copy="کارتابل" data-copy-value="' + (cust.cartable || '') + '">' + (cust.cartable || '-') + '</td>' +
                 '<td data-copy="مبلغ کل" data-copy-value="' + (cust.amount || '0') + ' افغانی" class="afghani-symbol">' + formatAfghani(cust.amount) + '</td>' +
                 '<td data-copy="رسید کل" data-copy-value="' + totals.totalReceipt + ' افغانی" class="afghani-symbol">' + formatAfghani(totals.totalReceipt) + '</td>' +
@@ -990,7 +1002,10 @@
     
     async function loadFromFirebase() {
         showLoading(true);
-        loadCartables();
+        // بارگذاری کارتابل‌ها
+        loadCartablesFromFirebase();
+        
+        // بارگذاری مشتریان
         onValue(customersRef, (snapshot) => {
             const data = snapshot.val();
             customers = [];
@@ -1004,9 +1019,8 @@
                     tempCustomers.push(cust);
                 }
                 
-                // برای مشتریان قدیمی که createdAt ندارند، یک مقدار اختصاص می‌دهیم
                 const now = Date.now();
-                const baseTime = now - (tempCustomers.length * 1000 * 60 * 60 * 24 * 30); // هر مشتری 30 روز فاصله
+                const baseTime = now - (tempCustomers.length * 1000 * 60 * 60 * 24 * 30);
                 
                 for(var j = 0; j < tempCustomers.length; j++) {
                     const cust = tempCustomers[j];
@@ -1158,10 +1172,10 @@
         var today = getTodayGregorian();
         
         var allFields = [
-            "تاریخ", "date", "نمبر پاسپورت", "passportNum", "تخلص", "lastName", "اسم", "firstName", "نام پدر", "fatherName",
+            "تاریخ", "date", "تخلص", "lastName", "اسم", "firstName", "نام پدر", "fatherName",
             "نام پدر کلان", "grandFatherName", "نام مادر", "motherName", "تماس AF", "phoneAF", "تماس ایران", "phoneIran",
             "آدرس افغانستان", "addressAF", "آدرس ایران", "addressIran", "شغل", "job", "توضیحات", "description", 
-            "کد پیگیری", "trackingCode1", "کد اختصاصی", "specialCode", "کد پیگیری دوم", "trackingCode2",
+            "کد رهگیری", "trackingCode1", "کد اختصاصی", "specialCode", "کد رهگیری", "trackingCode2",
             "کارتابل", "cartable", "مبلغ کل (AFN)", "amount"
         ];
         
@@ -1185,8 +1199,6 @@
                     '<select name="' + fieldName + '" id="cartableSelect">' + optionsHtml + '</select>' +
                     '<button type="button" class="add-btn" id="addCartableBtn" title="افزودن کارتابل جدید"><i class="fas fa-plus"></i></button>' +
                     '</div></div>';
-            } else if(fieldName === 'passportNum') {
-                gridHtml += '<div class="field-group-simple"><label>' + label + ' (اختیاری)</label><input type="text" name="' + fieldName + '" value="' + (value || '') + '" placeholder="اختیاری"></div>';
             } else if(fieldName === 'description') {
                 gridHtml += '<div class="field-group-simple"><label>' + label + '</label><textarea name="' + fieldName + '" rows="2" placeholder="اختیاری">' + (value || '') + '</textarea></div>';
             } else {
@@ -1198,7 +1210,7 @@
         
         modalDiv.innerHTML = '<div class="modal-card-sleek">' +
             '<div class="modal-header-sleek"><h3><i class="fas fa-' + (isEdit ? 'user-edit' : 'user-plus') + '"></i> ' + (isEdit ? 'ویرایش مشتری' : 'ثبت مشتری جدید') + '</h3><div class="close-modal-x" id="closeCustModal">✕</div></div>' +
-            '<div class="info-note"><i class="fas fa-info-circle"></i> فقط نام الزامی است. پاسپورت اختیاری می‌باشد. تاریخ به فرمت میلادی (YYYY-MM-DD)</div>' +
+            '<div class="info-note"><i class="fas fa-info-circle"></i> فقط نام الزامی است. تاریخ به فرمت میلادی (YYYY-MM-DD)</div>' +
             '<form id="custForm">' + gridHtml + '<button type="submit" class="submit-gold">' + (isEdit ? 'ذخیره تغییرات' : 'ثبت مشتری') + '</button></form>' +
             '</div>';
         document.body.appendChild(modalDiv);
@@ -1206,23 +1218,18 @@
         document.getElementById("closeCustModal").onclick = () => modalDiv.remove();
         modalDiv.addEventListener('click', (e) => { if(e.target === modalDiv) modalDiv.remove(); });
         
-        document.getElementById("addCartableBtn").onclick = function() {
+        document.getElementById("addCartableBtn").onclick = async function() {
             var newCartable = prompt("نام کارتابل جدید را وارد کنید:");
             if(newCartable && newCartable.trim() !== '') {
                 newCartable = newCartable.trim();
-                if(cartableList.indexOf(newCartable) === -1) {
-                    cartableList.push(newCartable);
-                    saveCartables();
-                    var select = document.getElementById("cartableSelect");
-                    var option = document.createElement('option');
-                    option.value = newCartable;
-                    option.text = newCartable;
-                    option.selected = true;
-                    select.appendChild(option);
-                    showToast('کارتابل "' + newCartable + '" اضافه شد');
-                } else {
-                    alert('این کارتابل قبلاً وجود دارد');
-                }
+                await addCartableToFirebase(newCartable);
+                // به‌روزرسانی select
+                var select = document.getElementById("cartableSelect");
+                var option = document.createElement('option');
+                option.value = newCartable;
+                option.text = newCartable;
+                option.selected = true;
+                select.appendChild(option);
             }
         };
         
@@ -1239,7 +1246,6 @@
                 alert("لطفاً نام مشتری را وارد کنید");
                 return;
             }
-            if(!formData.passportNum) formData.passportNum = '';
             
             if(isEdit && cust) {
                 await saveCustomerToFirebase(formData, cust.firebaseId);
